@@ -100,12 +100,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-// Apply migrations in development
+// Apply migrations and seed data in development
 if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<DeadlineDbContext>();
     db.Database.EnsureCreated();
+    await CourtRuleSeedData.SeedAsync(db);
 }
 
 app.Run();
