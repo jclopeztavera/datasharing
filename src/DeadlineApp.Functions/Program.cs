@@ -45,6 +45,11 @@ var host = new HostBuilder()
         services.AddScoped<IAuditLogger, AuditLogger>();
         services.AddScoped<ICalendarSyncService, CalendarSyncService>();
         services.AddScoped<ICurrentUserService, FunctionCurrentUserService>();
+
+        // Register notification services (both Email and Teams — injected as IEnumerable<INotificationService>)
+        services.AddScoped<INotificationService, EmailNotificationService>();
+        services.AddHttpClient<TeamsNotificationService>();
+        services.AddScoped<INotificationService, TeamsNotificationService>();
     })
     .Build();
 

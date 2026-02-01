@@ -20,5 +20,9 @@ public enum AuditAction
     MatterAccessed = 16,
     MatterClosed = 17,
     UserLogin = 18,
-    UserLogout = 19
+    UserLogout = 19,
+    NotificationSent = 20,
+    NotificationFailed = 21,
+    DeadlineMarkedOverdue = 22,
+    DailySummarySent = 23
 }

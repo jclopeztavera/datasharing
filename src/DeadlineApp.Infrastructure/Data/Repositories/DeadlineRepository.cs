@@ -148,4 +148,59 @@ public class DeadlineRepository : IDeadlineRepository
                         d.CalendarLink.SyncStatus == SyncStatus.Failed)
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<IEnumerable<Deadline>> GetAllOverdueAsync(CancellationToken cancellationToken = default)
+    {
+        var today = DateTime.UtcNow.Date;
+
+        return await _context.Deadlines
+            .Include(d => d.Matter)
+                .ThenInclude(m => m.ResponsibleAttorney)
+            .Include(d => d.CourtRule)
+            .Where(d => d.Matter.Status == MatterStatus.Active &&
+                        d.Status == DeadlineStatus.Pending &&
+                        d.DueDate < today)
+            .OrderBy(d => d.DueDate)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<Deadline>> GetAllUpcomingGroupedByAttorneyAsync(
+        int days = 7, CancellationToken cancellationToken = default)
+    {
+        var today = DateTime.UtcNow.Date;
+        var endDate = today.AddDays(days);
+
+        return await _context.Deadlines
+            .Include(d => d.Matter)
+                .ThenInclude(m => m.ResponsibleAttorney)
+            .Include(d => d.Matter)
+                .ThenInclude(m => m.Firm)
+            .Include(d => d.CourtRule)
+            .Where(d => d.Matter.Status == MatterStatus.Active &&
+                        d.Status == DeadlineStatus.Pending &&
+                        d.DueDate >= today &&
+                        d.DueDate <= endDate)
+            .OrderBy(d => d.Matter.ResponsibleAttorneyId)
+            .ThenBy(d => d.DueDate)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<Deadline>> GetAllAtRiskBufferAsync(
+        int daysThreshold = 3, CancellationToken cancellationToken = default)
+    {
+        var today = DateTime.UtcNow.Date;
+        var thresholdDate = today.AddDays(daysThreshold);
+
+        return await _context.Deadlines
+            .Include(d => d.Matter)
+                .ThenInclude(m => m.ResponsibleAttorney)
+            .Include(d => d.CourtRule)
+            .Where(d => d.Matter.Status == MatterStatus.Active &&
+                        d.Type == DeadlineType.Buffer &&
+                        d.Status == DeadlineStatus.Pending &&
+                        d.DueDate <= thresholdDate &&
+                        d.DueDate >= today)
+            .OrderBy(d => d.DueDate)
+            .ToListAsync(cancellationToken);
+    }
 }

@@ -15,4 +15,7 @@ public interface IDeadlineRepository
     Task<IEnumerable<Deadline>> CreateManyAsync(IEnumerable<Deadline> deadlines, CancellationToken cancellationToken = default);
     Task<Deadline> UpdateAsync(Deadline deadline, CancellationToken cancellationToken = default);
     Task<IEnumerable<Deadline>> GetPendingSyncAsync(CancellationToken cancellationToken = default);
+    Task<IEnumerable<Deadline>> GetAllOverdueAsync(CancellationToken cancellationToken = default);
+    Task<IEnumerable<Deadline>> GetAllUpcomingGroupedByAttorneyAsync(int days = 7, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Deadline>> GetAllAtRiskBufferAsync(int daysThreshold = 3, CancellationToken cancellationToken = default);
 }

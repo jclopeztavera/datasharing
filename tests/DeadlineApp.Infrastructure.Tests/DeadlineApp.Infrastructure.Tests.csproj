@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\DeadlineApp.Infrastructure\DeadlineApp.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\DeadlineApp.Functions\DeadlineApp.Functions.csproj" />
   </ItemGroup>
 
 </Project>
